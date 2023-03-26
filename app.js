@@ -27,6 +27,7 @@ const initializeDBAndServer = async () => {
 };
 
 initializeDBAndServer();
+
 function converting(eachObj) {
   return { movieName: eachObj.movie_name };
 }
@@ -60,7 +61,9 @@ app.get("/movies/:movieId/", async (request, response) => {
   const getMovieOnMovieId = `
     SELECT * 
     FROM movie
-    WHERE  movie_id = '${movieId}';`;
+    WHERE  
+    movie_id = ${movieId};
+    `;
   const result = await db.get(getMovieOnMovieId);
   response.send({
     movieId: result.movie_id,
@@ -82,7 +85,8 @@ app.put("/movies/:movieId/", async (request, response) => {
       movie_name = ${movieName},
       lead_actor = '${leadActor}'
     WHERE 
-      movie_id = '${movieId}';`;
+      movie_id = '${movieId}';
+      `;
   await db.run(updatedMoviesQuery);
   response.send("Movie Details Updated");
 });
@@ -120,7 +124,10 @@ app.get("/directors/:directorId/movies/", async (request, response) => {
       movie.movie_name as movieName
     FROM 
       director NATURAL JOIN movie
-    WHERE director.director_id = '${directorId}';`;
+    WHERE director.director_id = '${directorId}';
+    `;
   const result = await db.all(responseQuery);
   response.send(result);
 });
+
+
